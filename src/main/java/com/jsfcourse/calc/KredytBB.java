@@ -3,7 +3,6 @@ package com.jsfcourse.calc;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
@@ -11,43 +10,26 @@ import javax.faces.context.FacesContext;
 @RequestScoped
 //@SessionScoped
 public class KredytBB {
-	private String x;
-	private String y;
-	private Double result;
+	
+
+	private Double x;
+	private Double y;
+	private Double totalCreditCost;
+	private Double monthlyInstallment;
+	private Double creditYears;
 
 	@Inject
 	FacesContext ctx;
 
-	public String getX() {
-		return x;
-	}
-
-	public void setX(String x) {
-		this.x = x;
-	}
-
-	public String getY() {
-		return y;
-	}
-
-	public void setY(String y) {
-		this.y = y;
-	}
-
-	public Double getResult() {
-		return result;
-	}
-
-	public void setResult(Double result) {
-		this.result = result;
-	}
+	
 
 	public boolean doTheMath() {
 		try {
-			double x = Double.parseDouble(this.x);
-			double y = Double.parseDouble(this.y);
+			double x = this.x;
+			double y = this.y;
 
-			result = x + x*(y/100);
+			totalCreditCost = x + x*(y/100);
+			monthlyInstallment = totalCreditCost/(creditYears*12);
 
 			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Operacja wykonana poprawnie", null));
 			return true;
@@ -65,16 +47,59 @@ public class KredytBB {
 		}
 		return null;
 	}
+	
+	// Put result in messages on AJAX call
+		public String calc_AJAX() {
+			if (doTheMath()) {
+				ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Ca³kowity koszt kredytu: " + totalCreditCost, null));
+				ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Rata miesiêczna: " + monthlyInstallment, null));
+			}
+			return null;
+		}
 
-//	// Put result in messages on AJAX call
-//	public String calc_AJAX() {
-//		if (doTheMath()) {
-//			ctx.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Wynik: " + result, null));
-//		}
-//		return null;
-//	}
+	
+	public Double getX() {
+		return x;
+	}
 
+	public void setX(Double x) {
+		this.x = x;
+	}
+
+	public Double getY() {
+		return y;
+	}
+
+	public void setY(Double y) {
+		this.y = y;
+	}
+
+	public Double getTotalCreditCost() {
+		return totalCreditCost;
+	}
+
+	public void setTotalCreditCost(Double result) {
+		this.totalCreditCost = result;
+	}
+	
+	public Double getCreditYears() {
+		return creditYears;
+	}
+
+	public void setCreditYears(Double creditYears) {
+		this.creditYears = creditYears;
+	}
+
+	
 	public String info() {
 		return "info";
+	}
+
+	public Double getMonthlyInstallment() {
+		return monthlyInstallment;
+	}
+
+	public void setMonthlyInstallment(Double monthlyInstallment) {
+		this.monthlyInstallment = monthlyInstallment;
 	}
 }
